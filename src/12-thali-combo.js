@@ -54,16 +54,54 @@
  */
 export function createThaliDescription(thali) {
   // Your code here
+  if(typeof thali !== "object" || Array.isArray(thali) || thali === null) return "";
+  else if(typeof thali.name !== "string" || !Array.isArray(thali.items) || typeof thali.price !== "number" || typeof thali.isVeg !== "boolean") return "";
+  else {
+    if(thali.isVeg) return `${thali.name.toUpperCase()} (Veg) - Items: ${thali.items.join(", ")} - Rs.${thali.price.toFixed(2)}`;
+    else return `${thali.name.toUpperCase()} (Non-Veg) - Items: ${thali.items.join(", ")} - Rs.${thali.price.toFixed(2)}`;
+  }
 }
 
 export function getThaliStats(thalis) {
   // Your code here
+  if(!Array.isArray(thalis) || thalis.length === 0) return null;
+  else {
+    const totalThalis = thalis.length;
+    const vegArr = thalis.filter(item => item.isVeg);
+    const nonvegArr = thalis.filter(item => !item.isVeg);
+    const vegCount = vegArr.length;
+    const nonVegCount = nonvegArr.length;
+    const sum = thalis.reduce((acc,curr) => (acc + curr.price),0);
+    const avgPrice = sum / thalis.length;
+    const cheapest = Math.min(...thalis.map(item => item.price));
+    const costliest = Math.max(...thalis.map((item) => item.price));
+    const names = thalis.map(item => item.name);
+    return {
+      totalThalis,
+      vegCount,
+      nonVegCount,
+      avgPrice: avgPrice.toFixed(2).toString(),
+      cheapest,
+      costliest,
+      names
+    }
+  }
 }
 
 export function searchThaliMenu(thalis, query) {
   // Your code here
+  if(!Array.isArray(thalis) || typeof query !== "string") return [];
+  else {
+    const qry = query.toLowerCase();
+    return thalis.filter(item => (item.name.toLowerCase().includes(qry) || item.items.some(food => food.toLowerCase().includes(qry))))
+  }
 }
 
 export function generateThaliReceipt(customerName, thalis) {
   // Your code here
+  if(typeof customerName !== "string" || !Array.isArray(thalis) || thalis.length === 0) return "";
+  else {
+    return `THALI RECEIPT\n--- \nCustomer: ${customerName.toUpperCase()}\n${thalis.map(item => `- ${item.name} x Rs.${item.price}`).join("\n")}\n--- \nTotal: Rs.${thalis.reduce((acc,item) => (acc + item.price),0)}\nItems: ${thalis.length}`
+  }
+
 }
